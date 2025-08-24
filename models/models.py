@@ -1,13 +1,14 @@
 from abc import ABC
 from datetime import datetime
 from pathlib import Path
-from typing import Literal, Optional, List
+from typing import Optional, List
 
 import pandas as pd
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import os
 
-from models.enums import FeatureType, CategoricalEncodingType, MissingValueImputationMethod, ContinuousFeatureScalingType
+from models.enums import FeatureType, CategoricalEncodingType, MissingValueImputationMethod, \
+    ContinuousFeatureScalingType, ProblemType, ClassificationModels
 from configurations.constants import TEMP_FOLDER_PATH, SUB_FOLDERS
 from helpers.logger import logger
 
@@ -32,7 +33,7 @@ class DatasetSplitConfig(BaseModel):
 
 class DatasetConfig(BaseModel):
     dataset_name: str
-    task: Literal["classification", "regression"]
+    problem_type: ProblemType
     columns: List[ColumnConfig]
     working_directory_path: Path = None
     dataset_split_config: DatasetSplitConfig
@@ -85,3 +86,54 @@ class DatasetSplits:
         self.training_dataset = training_dataset
         self.testing_dataset = testing_dataset
         self.validation_dataset = validation_dataset
+
+
+class DatasetsPredictorsAndTargets:
+    def __init__(
+        self,
+        training_x: pd.DataFrame,
+        training_y: pd.DataFrame,
+        testing_x: pd.DataFrame,
+        testing_y: pd.DataFrame,
+        validation_x: Optional[pd.DataFrame] = None,
+        validation_y: Optional[pd.DataFrame] = None
+    ):
+        self.training_x = training_x
+        self.training_y = training_y
+        self.testing_x = testing_x
+        self.testing_y = testing_y
+        self.validation_x = validation_x
+        self.validation_y = validation_y
+
+
+class ModelPerformance(BaseModel, ABC):
+    model: ClassificationModels
+    model_path: str
+
+
+class ClassificationModelPerformance(ModelPerformance):
+    accuracy: float
+    precision: float
+    recall: float
+    f1: float
+
+    def pretty_print(self):
+        logger.info(f"\t\tModel Performance:")
+        logger.info(f"\t\t\tAccuracy: {self.accuracy}")
+        logger.info(f"\t\t\tPrecision: {self.precision}")
+        logger.info(f"\t\t\tRecall: {self.recall}")
+        logger.info(f"\t\t\tF1: {self.f1}")
+
+
+class RegressionModelPerformance(ModelPerformance):
+    mean_absolute_error: float
+    mean_squared_error: float
+    root_mean_squared_error: float
+    r2_score: float
+
+    def pretty_print(self):
+        logger.info(f"\t\tModel Performance:")
+        logger.info(f"\t\t\tMean Absolute Error: {self.mean_absolute_error}")
+        logger.info(f"\t\t\tMean Squared Error: {self.mean_squared_error}")
+        logger.info(f"\t\t\tRoot Mean Squared Error: {self.root_mean_squared_error}")
+        logger.info(f"\t\t\tR2 Score: {self.r2_score}")

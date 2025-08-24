@@ -1,7 +1,7 @@
 import pandas as pd
 
 from helpers.functions import save_intermediary_dataset
-from models.models import DatasetConfig
+from models.models import DatasetConfig, DatasetSplits
 from helpers.logger import logger
 from configurations.constants import LINE_BREAK
 from services.preprocessing_services.missing_values_handler import handle_missing_values
@@ -10,7 +10,7 @@ from services.preprocessing_services.dataset_spliting_service import split_train
 from services.preprocessing_services.feature_scaling_service import scale_continuous_features
 
 
-def preprocess_dataset(dataset: pd.DataFrame, config: DatasetConfig) -> None:
+def preprocess_dataset(dataset: pd.DataFrame, config: DatasetConfig) -> DatasetSplits:
     logger.info(LINE_BREAK)
     logger.info("DATASET PREPROCESSING")
     __drop_unused_columns(dataset, config)
@@ -18,6 +18,8 @@ def preprocess_dataset(dataset: pd.DataFrame, config: DatasetConfig) -> None:
     encode_categorical_features(dataset, config)
     dataset_splits = split_training_testing_validation_datasets(dataset, config)
     scale_continuous_features(dataset_splits, config)
+    logger.info("Dataset preprocessing finished.")
+    return dataset_splits
 
 
 def __drop_unused_columns(dataset: pd.DataFrame, config: DatasetConfig) -> None:

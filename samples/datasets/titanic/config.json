@@ -1,6 +1,6 @@
 {
   "dataset_name": "titanic",
-  "task": "classification",
+  "problem_type": "classification",
   "columns": [
     {"name": "PassengerId", "type": "continuous", "drop": true},
     {"name": "Name", "type": "str", "drop": true},
@@ -15,7 +15,5 @@
     {"name": "Parch", "type": "continuous", "drop": false},
     {"name": "Survived", "type": "categorical", "drop": false, "target": true}
   ],
-  "dataset_split_config": {"training":  0.7, "testing": 0.3, "random_seed": 2},
-  "models": ["logistic_regression", "random_forest", "xgboost"],
-  "evaluation": ["accuracy", "f1", "roc_auc"]
+  "dataset_split_config": {"training":  0.7, "testing": 0.3, "random_seed": 2}
 }
