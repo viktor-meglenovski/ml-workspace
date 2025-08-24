@@ -1,0 +1,20 @@
+{
+  "dataset_name": "titanic",
+  "task": "classification",
+  "columns": [
+    {"name": "PassengerId", "type": "int", "drop": true},
+    {"name": "Name", "type": "str", "drop": true},
+    {"name": "Ticket", "type": "str", "drop": true},
+    {"name": "Cabin", "type": "str", "drop": true},
+    {"name": "Age", "type": "int", "drop": false, "missing": "mean", "scale": "standard"},
+    {"name": "Fare", "type": "float", "drop": false, "scale": "minmax"},
+    {"name": "Sex", "type": "categorical", "drop": false, "encode": "onehot"},
+    {"name": "Embarked", "type": "categorical", "drop": false, "encode": "onehot", "missing": "mode"},
+    {"name": "Pclass", "type": "categorical", "drop": false, "encode": "ordinal", "encoding_values": {"first":  1, "second": 2, "third": 3}},
+    {"name": "SibSp", "type": "int", "drop": false},
+    {"name": "Parch", "type": "int", "drop": false},
+    {"name": "Survived", "type": "bool", "drop": false, "target": true}
+  ],
+  "models": ["logistic_regression", "random_forest", "xgboost"],
+  "evaluation": ["accuracy", "f1", "roc_auc"]
+}
