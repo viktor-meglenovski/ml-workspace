@@ -3,7 +3,7 @@ from typing import Tuple, Dict
 import pandas as pd
 
 from configurations.constants import LINE_BREAK
-from helpers.functions import calculate_statistic
+from helpers.functions import calculate_statistic, save_intermediary_dataset
 from helpers.logger import logger
 from models.models import DatasetConfig, ColumnConfig
 
@@ -24,6 +24,7 @@ def handle_missing_values(dataset: pd.DataFrame, config: DatasetConfig) -> None:
             logger.warning("\tMissing values still exist in the dataset.")
             return
         logger.info("Missing values handled successfully")
+        save_intermediary_dataset(dataset, config.working_directory_path, "missing_values_handled")
     except Exception as exception:
         logger.error(f"Error while handling missing values in dataset. Exception: {str(exception)}")
         raise
@@ -37,10 +38,10 @@ def __handle_missing_value_for_column(dataset: pd.DataFrame, missing_values: dic
         error_message = f"Missing values for column '{column_config.name}' cannot be handled because the handling method is not specified."
         logger.error(f"\t{error_message}")
         raise Exception(error_message)
-    logger.info(f"\tHandling missing values for column '{column_config.name}' using '{column_config.missing}' method")
+    logger.info(f"\tHandling missing values for column '{column_config.name}' using '{column_config.missing.value}' method")
     imputation_value = calculate_statistic(dataset[column_config.name], column_config.missing)
     dataset[column_config.name] = dataset[column_config.name].fillna(imputation_value)
-    logger.info(f"\tFilled missing values in column '{column_config.name}' with {column_config.missing} value: {imputation_value}")
+    logger.info(f"\tFilled missing values in column '{column_config.name}' with {column_config.missing.value} value: {imputation_value}")
 
 
 def __detect_missing_values(dataset: pd.DataFrame) -> Tuple[Dict, int]:

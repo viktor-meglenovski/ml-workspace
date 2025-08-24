@@ -1,9 +1,11 @@
 import pandas as pd
 
+from helpers.functions import save_intermediary_dataset
 from models.models import DatasetConfig
 from helpers.logger import logger
 from configurations.constants import LINE_BREAK
 from services.preprocessing_services.missing_values_handler import handle_missing_values
+from services.preprocessing_services.feature_encoding_service import encode_categorical_features
 
 
 def preprocess_dataset(dataset: pd.DataFrame, config: DatasetConfig) -> None:
@@ -11,6 +13,8 @@ def preprocess_dataset(dataset: pd.DataFrame, config: DatasetConfig) -> None:
     logger.info("DATASET PREPROCESSING")
     __drop_unused_columns(dataset, config)
     handle_missing_values(dataset, config)
+    encoding_configs = encode_categorical_features(dataset, config)
+    print(encoding_configs)
 
 
 def __drop_unused_columns(dataset: pd.DataFrame, config: DatasetConfig) -> None:
@@ -25,6 +29,7 @@ def __drop_unused_columns(dataset: pd.DataFrame, config: DatasetConfig) -> None:
         dataset.drop(columns=columns_to_drop, inplace=True)
         config.columns = [column for column in config.columns if not column.drop]
         logger.info("Unused columns dropped successfully")
+        save_intermediary_dataset(dataset, config.working_directory_path, "dropped_columns")
     except Exception as exception:
         logger.error(f"Error while dropping unused columns. Exception: {str(exception)}")
         raise
