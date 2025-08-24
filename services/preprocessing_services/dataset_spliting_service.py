@@ -1,11 +1,10 @@
-from pathlib import Path
 from typing import Tuple
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from configurations.constants import LINE_BREAK
-from helpers.functions import save_intermediary_dataset
+from helpers.functions import save_dataset_splits
 from helpers.logger import logger
 from models.models import DatasetConfig, DatasetSplits, DatasetSplitConfig
 
@@ -38,7 +37,7 @@ def split_training_testing_validation_datasets(dataset: pd.DataFrame, config: Da
         dataset_splits = DatasetSplits(training_dataset=training_dataset,
                                        testing_dataset=testing_dataset,
                                        validation_dataset=validation_dataset)
-        __save_dataset_splits(dataset_splits, config.working_directory_path)
+        save_dataset_splits(dataset_splits, config.working_directory_path, "dataset_splits")
         logger.info("Dataset splitting finished.")
         return dataset_splits
     except Exception as exception:
@@ -65,10 +64,3 @@ def __split_testing_validation_dataset(dataset_split_config: DatasetSplitConfig,
         random_state=dataset_split_config.random_seed
     )
     return testing_dataset, validation_dataset
-
-
-def __save_dataset_splits(dataset_split: DatasetSplits, working_directory_path: Path) -> None:
-    save_intermediary_dataset(dataset_split.training_dataset, working_directory_path, "training", "dataset_splits")
-    save_intermediary_dataset(dataset_split.testing_dataset, working_directory_path, "testing", "dataset_splits")
-    if dataset_split.validation_dataset is not None:
-        save_intermediary_dataset(dataset_split.validation_dataset, working_directory_path, "validation", "dataset_splits")

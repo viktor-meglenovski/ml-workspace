@@ -32,7 +32,7 @@ def __drop_unused_columns(dataset: pd.DataFrame, config: DatasetConfig) -> None:
         dataset.drop(columns=columns_to_drop, inplace=True)
         config.columns = [column for column in config.columns if not column.drop]
         logger.info("Unused columns dropped successfully")
-        save_intermediary_dataset(dataset, config.working_directory_path, "dropped_columns")
+        save_intermediary_dataset(dataset, config.working_directory_path, "dropped_unused_columns")
     except Exception as exception:
         logger.error(f"Error while dropping unused columns. Exception: {str(exception)}")
         raise

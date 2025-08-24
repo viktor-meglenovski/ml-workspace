@@ -9,7 +9,7 @@ class MissingValueImputationMethod(Enum):
 
 class FeatureType(Enum):
     STR = "str"
-    FLOAT = "float"
+    CONTINUOUS = "continuous"
     CATEGORICAL = "categorical"
 
 

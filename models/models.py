@@ -69,6 +69,12 @@ class OrdinalEncodingConfig(EncodingConfig):
     mappings: dict
 
 
+class ScalerConfig(BaseModel):
+    scaler_type: ContinuousFeatureScalingType
+    feature_names: list[str]
+    file_path: str
+
+
 class DatasetSplits:
     def __init__(
         self,

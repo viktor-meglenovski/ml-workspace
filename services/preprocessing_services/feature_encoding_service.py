@@ -4,7 +4,7 @@ from typing import List, Union
 
 import pandas as pd
 
-from configurations.constants import LINE_BREAK, ENCODING_CONFIG_FILE
+from configurations.constants import LINE_BREAK, ENCODINGS_CONFIG_FILE
 from helpers.functions import save_intermediary_dataset
 from helpers.logger import logger
 from models.models import DatasetConfig, ColumnConfig, BinaryOneHotEncodingConfig, MultiOneHotEncodingConfig, \
@@ -18,21 +18,21 @@ def encode_categorical_features(dataset: pd.DataFrame, config: DatasetConfig) ->
         logger.info("Encode categorical features")
         encoded_features = list()
         skipped_features = list()
-        encoding_configs = list()
+        encodings_config = list()
         for feature in config.columns:
             if feature.type != FeatureType.CATEGORICAL:
                 continue
             encoding_config = __encode_feature(dataset, feature)
             if encoding_config:
                 encoded_features.append(feature.name)
-                encoding_configs.append(encoding_config)
+                encodings_config.append(encoding_config)
             else:
                 skipped_features.append(feature.name)
         if encoded_features:
             logger.info(f"Categorical features '{encoded_features}' encoded successfully")
         if skipped_features:
             logger.info(f"Skipped encodings for categorical features '{skipped_features}'")
-        __save_encoding_configs(config.working_directory_path, encoding_configs)
+        __save_encodings_config(config.working_directory_path, encodings_config)
         save_intermediary_dataset(dataset, config.working_directory_path, "categorical_features_encoded")
     except Exception as exception:
         logger.error(f"Error while encoding categorical features. Exception: {str(exception)}")
@@ -95,9 +95,9 @@ def __ordinal_encode_feature(dataset: pd.DataFrame, feature_name: str, category_
     return encoding_config
 
 
-def __save_encoding_configs(working_directory_path: Path, encoding_configs: list) -> None:
-    encoding_config_file_path = working_directory_path / ENCODING_CONFIG_FILE
-    encoding_config_json = [json.loads(config.json()) for config in encoding_configs]
-    with open(encoding_config_file_path, 'w') as f:
-        json.dump(encoding_config_json, f, indent=4)
-    logger.info(f"Encoding configurations saved at '{encoding_config_file_path}'")
+def __save_encodings_config(working_directory_path: Path, encodings_config: list) -> None:
+    encodings_config_file_path = working_directory_path / ENCODINGS_CONFIG_FILE
+    encodings_config_json = [json.loads(config.json()) for config in encodings_config]
+    with open(encodings_config_file_path, 'w') as f:
+        json.dump(encodings_config_json, f, indent=4)
+    logger.info(f"Encoding configurations saved at '{encodings_config_file_path}'")
