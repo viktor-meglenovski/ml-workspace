@@ -10,7 +10,6 @@ def main():
         dataset_name = read_dataset_service.pick_sample_dataset()
         dataset, config = read_dataset_service.read_dataset(dataset_name)
         dataset_preprocessing_service.preprocess_dataset(dataset, config)
-        logger.info(dataset)
     except Exception as exception:
         logger.error(f"\tError in workflow. Exception: {str(exception)}")
 

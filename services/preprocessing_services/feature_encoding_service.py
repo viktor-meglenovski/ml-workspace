@@ -12,7 +12,7 @@ from models.models import DatasetConfig, ColumnConfig, BinaryOneHotEncodingConfi
 from models.enums import FeatureType, CategoricalEncodingType
 
 
-def encode_categorical_features(dataset: pd.DataFrame, config: DatasetConfig) -> List[EncodingConfig]:
+def encode_categorical_features(dataset: pd.DataFrame, config: DatasetConfig) -> None:
     try:
         logger.info(LINE_BREAK)
         logger.info("Encode categorical features")

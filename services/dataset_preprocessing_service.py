@@ -6,6 +6,8 @@ from helpers.logger import logger
 from configurations.constants import LINE_BREAK
 from services.preprocessing_services.missing_values_handler import handle_missing_values
 from services.preprocessing_services.feature_encoding_service import encode_categorical_features
+from services.preprocessing_services.dataset_spliting_service import split_training_testing_validation_datasets
+from services.preprocessing_services.feature_scaling_service import scale_continuous_features
 
 
 def preprocess_dataset(dataset: pd.DataFrame, config: DatasetConfig) -> None:
@@ -13,8 +15,9 @@ def preprocess_dataset(dataset: pd.DataFrame, config: DatasetConfig) -> None:
     logger.info("DATASET PREPROCESSING")
     __drop_unused_columns(dataset, config)
     handle_missing_values(dataset, config)
-    encoding_configs = encode_categorical_features(dataset, config)
-    print(encoding_configs)
+    encode_categorical_features(dataset, config)
+    dataset_splits = split_training_testing_validation_datasets(dataset, config)
+    scale_continuous_features(dataset_splits, config)
 
 
 def __drop_unused_columns(dataset: pd.DataFrame, config: DatasetConfig) -> None:

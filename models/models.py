@@ -2,6 +2,8 @@ from abc import ABC
 from datetime import datetime
 from pathlib import Path
 from typing import Literal, Optional, List
+
+import pandas as pd
 from pydantic import BaseModel, Field
 import os
 
@@ -21,11 +23,19 @@ class ColumnConfig(BaseModel):
     target: Optional[bool] = False
 
 
+class DatasetSplitConfig(BaseModel):
+    training: float
+    testing: float
+    validation: Optional[float] = 0
+    random_seed: Optional[int] = None
+
+
 class DatasetConfig(BaseModel):
     dataset_name: str
     task: Literal["classification", "regression"]
     columns: List[ColumnConfig]
     working_directory_path: Path = None
+    dataset_split_config: DatasetSplitConfig
 
     def model_post_init(self, __context) -> None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -57,3 +67,15 @@ class MultiOneHotEncodingConfig(EncodingConfig):
 class OrdinalEncodingConfig(EncodingConfig):
     encoding_type: CategoricalEncodingType = CategoricalEncodingType.ORDINAL
     mappings: dict
+
+
+class DatasetSplits:
+    def __init__(
+        self,
+        training_dataset: pd.DataFrame,
+        testing_dataset: pd.DataFrame,
+        validation_dataset: Optional[pd.DataFrame] = None
+    ):
+        self.training_dataset = training_dataset
+        self.testing_dataset = testing_dataset
+        self.validation_dataset = validation_dataset
